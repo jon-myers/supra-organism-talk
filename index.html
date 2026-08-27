@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supra-Organism — breath, models, and a room</title>
+<style>
+:root{
+  --bg:#0c0e11; --panel:#14181d; --ink:#ecebe7; --dim:#9aa3ad; --faint:#5d6873;
+  --amber:#d9a441; --teal:#5fb3a6; --rose:#c9736b; --line:#262c34;
+  --slot:#8a6d2f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+
+/* ---------- slide frame ---------- */
+.slide{
+  display:none; position:absolute; inset:0;
+  padding:clamp(28px,4.2vw,72px) clamp(32px,5.5vw,110px) clamp(56px,5vw,84px);
+  overflow-y:auto;
+}
+.slide.on{display:block}
+.wrap{max-width:1220px;margin:0 auto;height:100%;display:flex;flex-direction:column;justify-content:center}
+.slide.top .wrap{justify-content:flex-start;padding-top:1vh}
+
+h1{font-family:"Iowan Old Style",Georgia,serif;font-weight:600;
+   font-size:clamp(38px,6.4vw,86px);line-height:1.02;margin:0 0 .35em;letter-spacing:-.015em}
+h2{font-family:"Iowan Old Style",Georgia,serif;font-weight:600;
+   font-size:clamp(26px,3.5vw,48px);line-height:1.08;margin:0 0 .1em;letter-spacing:-.01em}
+.eyebrow{font-size:clamp(11px,1.15vw,15px);letter-spacing:.18em;text-transform:uppercase;
+   color:var(--amber);margin:0 0 1.1em;font-weight:600}
+.sub{font-size:clamp(15px,1.7vw,23px);color:var(--dim);line-height:1.5;margin:.2em 0 1.4em;max-width:46em}
+p{font-size:clamp(14px,1.45vw,20px);line-height:1.55;margin:0 0 .85em;max-width:44em}
+.lead{font-size:clamp(17px,2.05vw,29px);line-height:1.42;color:var(--ink);max-width:24em}
+strong{color:#fff;font-weight:600}
+em{color:var(--teal);font-style:italic}
+a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(95,179,166,.35)}
+
+ul{margin:0 0 1em;padding-left:1.15em;max-width:44em}
+li{font-size:clamp(14px,1.4vw,19px);line-height:1.5;margin-bottom:.5em}
+li::marker{color:var(--faint)}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,52px);align-items:start}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,32px);align-items:start}
+@media (max-width:900px){.cols,.cols3{grid-template-columns:1fr}}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:clamp(14px,1.6vw,22px)}
+.card h3{margin:0 0 .45em;font-size:clamp(14px,1.35vw,18px);letter-spacing:.02em;color:#fff}
+.card p,.card li{font-size:clamp(13px,1.2vw,16px);margin-bottom:.5em}
+
+.kv{display:flex;gap:.6em;font-size:clamp(13px,1.25vw,17px);color:var(--dim);
+  padding:.42em 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:none}
+.kv b{color:var(--ink);font-weight:600;min-width:9.5em;display:inline-block}
+
+.big{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(34px,5vw,64px);
+  color:var(--amber);line-height:1;margin:0 0 .12em}
+.bigl{font-size:clamp(12px,1.2vw,15px);color:var(--dim);letter-spacing:.04em}
+
+.quote{font-family:"Iowan Old Style",Georgia,serif;font-size:clamp(19px,2.5vw,34px);
+  line-height:1.32;color:#fff;border-left:3px solid var(--amber);padding-left:.7em;margin:.2em 0 .6em;max-width:20em}
+.attrib{font-size:clamp(12px,1.2vw,16px);color:var(--faint)}
+
+/* ---------- audio ---------- */
+.clip{display:flex;align-items:center;gap:.75em;margin:.4em 0;flex-wrap:wrap}
+.clip .lab{font-size:clamp(12px,1.2vw,16px);color:var(--dim);min-width:13.5em;flex-shrink:0}
+.clip .lab b{color:var(--ink);font-weight:600}
+audio{height:34px;flex:1;min-width:230px;max-width:430px;filter:invert(.92) hue-rotate(180deg) saturate(.35)}
+.cliprow{margin:.7em 0 .2em}
+.cliphead{font-size:clamp(11px,1.1vw,14px);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);margin:1.1em 0 .3em;font-weight:600}
+
+/* stepped morph ladder — discrete buttons, no drag, no animation */
+.ladder{margin:.6em 0 .2em}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.6em}
+.steps button{font:inherit;font-size:clamp(11px,1.1vw,14px);padding:.42em .7em;
+  background:var(--panel);color:var(--dim);border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.steps button[aria-pressed="true"]{background:var(--amber);color:#17130a;border-color:var(--amber);font-weight:600}
+.ladder .state{font-size:clamp(12px,1.2vw,16px);color:var(--dim);margin-bottom:.4em}
+
+/* ---------- media slots ---------- */
+.slot{border:1px dashed var(--slot);border-radius:10px;padding:clamp(13px,1.5vw,20px);
+  background:rgba(217,164,65,.045);margin:.5em 0}
+.slot .tag{font-size:clamp(10px,1.05vw,13px);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--amber);font-weight:700;margin-bottom:.35em}
+.slot p{font-size:clamp(13px,1.2vw,16px);color:var(--dim);margin:0}
+video{width:100%;max-height:58vh;border-radius:10px;border:1px solid var(--line);background:#000;display:block}
+
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;
+  color:var(--teal);background:rgba(95,179,166,.09);padding:.05em .3em;border-radius:4px}
+
+/* ---------- diagram ---------- */
+svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
+.cite{font-size:clamp(11px,1.1vw,14px);color:var(--faint);line-height:1.5;margin-top:.9em}
+.cite a{color:var(--faint);border-bottom-color:rgba(93,104,115,.4)}
+
+/* ---------- chrome ---------- */
+#hud{position:fixed;right:14px;bottom:11px;font-size:12px;color:var(--faint);
+  letter-spacing:.08em;font-variant-numeric:tabular-nums;z-index:50}
+#title-bar{position:fixed;left:16px;bottom:11px;font-size:12px;color:var(--faint);letter-spacing:.05em;z-index:50}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:38vh;overflow-y:auto;
+  background:#080a0c;border-top:1px solid var(--line);padding:16px 22px 26px;display:none;z-index:60}
+#notes.on{display:block}
+#notes h4{margin:0 0 .5em;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+#notes p{font-size:15px;color:var(--dim);max-width:60em;margin-bottom:.5em}
+#help{position:fixed;left:16px;top:12px;font-size:12px;color:var(--faint);z-index:50}
+
+@media print{
+  body{overflow:visible;background:#fff}
+  .slide{display:block;position:static;page-break-after:always;min-height:98vh;
+    background:#fff;color:#111;border-bottom:1px solid #ccc}
+  #hud,#notes,#help,#title-bar{display:none}
+  h1,h2,.big{color:#111}
+  .card{background:#f4f4f2;border-color:#ddd}
+}
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+<!-- 1 ============================================================ -->
+<section class="slide" data-notes="Set the frame in two sentences: this is a performance first, an engineering project second. Everything that follows is in service of a 30-minute dance work on October 3rd.">
+<div class="wrap">
+  <p class="eyebrow">HAI-Res · lab talk · 27 August 2026</p>
+  <h1>Supra-Organism</h1>
+  <p class="lead" style="color:var(--dim)">Turning breath into instruments, and a known song back into breath — where the sound work stands eight weeks out.</p>
+  <div style="margin-top:2.2em;font-size:clamp(13px,1.3vw,17px);color:var(--faint);line-height:1.7">
+    Jon Myers · Human–AI Resonance Group<br>
+    A performance by Grisha Coleman · MIT Future Fest, Little Kresge · two workshops, two performances, 3 October 2026<br>
+    Also Project 1 of <em style="color:var(--faint)">21M.369 Tuning Attention</em>
+  </div>
+</div>
+</section>
+
+<!-- 2 ============================================================ -->
+<section class="slide" data-notes="Grisha's piece, not mine. My job is the sound system inside it. Note the harmonium line — she called it an analogue of lungs, too rich for one person to produce, which is exactly the gap a model can fill.">
+<div class="wrap">
+  <p class="eyebrow">The piece</p>
+  <h2>Thirty minutes of dance, driven by the dancers' own physiology</h2>
+  <p class="sub">Choreographed by Grisha Coleman. <strong>Two workshops and two performances</strong> at MIT Future Fest, Little Kresge, October 2026.</p>
+  <div class="cols">
+    <div>
+      <div class="kv"><b>Form</b><span>a 30-minute dance work — biofeedback from the performers' bodies feeding the audio they move to</span></div>
+      <div class="kv"><b>Arc</b><span>breathing → humming → open vowel — "as soon as the lips open, like the sun comes out"</span></div>
+      <div class="kv"><b>Sound targets</b><span>harmonium — <em>"an analogue of lungs"</em> — aeolian harp, ebow</span></div>
+      <div class="kv"><b>Somatics</b><span><strong>Feldenkrais</strong> — Grisha is a practitioner; the score and the movement sections come out of it</span></div>
+      <div class="kv"><b>On the body</b><span>head-mounted mics, in-ear monitoring — the in-ear can itself be a score</span></div>
+      <div class="kv"><b>Latency</b><span>need not be 1:1. A response that arrives later is <em>more</em> interesting, not less</span></div>
+    </div>
+    <div>
+      <div class="slot">
+        <div class="tag">Video slot — to shoot</div>
+        <p>Rehearsal footage, September. Bodies and breath in the room. This is the one thing no screen recording can substitute for.</p>
+      </div>
+      <p style="margin-top:1em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        Eleven rehearsals, ~30 hours, 3 Sept → 2 Oct. Tech at 08:30 on show day.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 3 ============================================================ -->
+<section class="slide top" data-notes="Say plainly that the piece already exists and has been run before — what is new at MIT is the sound side. THE SOURCE already speaks SuperCollider, which is the obvious integration point for my rig.">
+<div class="wrap">
+  <p class="eyebrow">This is not its first outing</p>
+  <h2>Montpellier, April 2026</h2>
+  <p class="sub">Supra-Organism ran as a workshop at <strong>MOCO'26</strong> — the 10th International Conference on Movement and Computing, Cité des Arts, Montpellier, 23–25 April — presented by Grisha Coleman with Mark-David Hosale and Alan Macy.</p>
+  <div class="cols">
+    <div>
+      <p>Participants were put through hands-on exercises joining <strong>biophysical sensing</strong> to somatic practice — Feldenkrais technique alongside real-time physiological feedback — and the paper of the same name is the week-one reading for our class.</p>
+      <p>Hosale and Macy visit the class on <strong>30 September</strong>, three days before the show.</p>
+      <p style="color:var(--faint)">What is new at MIT is the sound: the biosensing side already exists and has been tested in front of people. The morphing does not.</p>
+    </div>
+    <div class="card">
+      <h3>THE SOURCE — Hosale &amp; Macy</h3>
+      <p>The wearable sensing platform the piece is built around. Full-spectrum biophysical capture: ECG, EMG, EEG, EOG, EGG, respiratory effort, EDA, PPG, blood volume and flow.</p>
+      <p style="margin-bottom:0">It already talks to <strong>SuperCollider</strong> — along with Max, Ableton, TouchDesigner and Processing. Which is the obvious place for my rig to meet it.</p>
+    </div>
+  </div>
+  <p class="cite">Supra-Organism: Biophysical Sensing Toward Affective Somatic Integration — Coleman, Hosale &amp; Macy, <a href="https://dl.acm.org/doi/10.1145/3802842.3802906">MOCO '26</a>, ACM. Platform: <a href="https://www.biomeci.com/events/">bioMECI</a>. No public video of the Montpellier workshop was found — worth asking Grisha or Mark-David directly.</p>
+</div>
+</section>
+
+<!-- 4 ============================================================ -->
+<section class="slide" data-notes="This is the current thinking and it is in flux. The point to land: the ritual is not decoration, it solves the credibility problem that kills most computer music on stage.">
+<div class="wrap">
+  <p class="eyebrow">The design problem</p>
+  <h2>The piece will open with a "ritual"</h2>
+  <p class="lead">The performers will make the input sounds live, in front of the audience, before anything is processed.</p>
+  <div class="cols" style="margin-top:1.2em">
+    <div>
+      <p>So that everything heard afterwards will be heard as <strong>descended from those bodies</strong>. The audience should build that connection itself, in the first minutes, and carry it through the rest of the piece.</p>
+      <p>Without it you get the classic computer-music disconnect: no one can tell whether someone on stage is transforming a voice in real time or pressing play on a track made last week. The two look identical from row four.</p>
+    </div>
+    <div class="card">
+      <h3>What the ritual should buy us</h3>
+      <p>Establishing liveness early is what earns the freedom to <strong>delay, layer and transform</strong> later — including the non-simultaneous responses Grisha and Anna both want. The audience should still trace a sound at minute twenty back to a breath at minute two.</p>
+      <p style="color:var(--faint);margin-bottom:0">Status: current plan, still in flux.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 4 ============================================================ -->
+<section class="slide" data-notes="Why a morph rather than an effect or a synth. The uncanny middle is the material — not the endpoints. And it has to be playable: controllable, repeatable, slow enough to hear.">
+<div class="wrap">
+  <p class="eyebrow">Why morphing</p>
+  <h2>The interesting part is the passage, not the endpoints</h2>
+  <div class="cols" style="margin-top:.8em">
+    <div>
+      <p>A morph is a way of getting at the <strong>uncanniness</strong> of these processes. Breath is legible; harmonium is legible. The region between them is neither — a voice that is no longer only a voice and not yet an instrument.</p>
+      <p>That in-between is the material. Which means the system's job is not to produce a good harmonium; it is to make the <em>passage</em> playable — controllable, repeatable, and slow enough to hear it happen.</p>
+    </div>
+    <div class="card">
+      <h3>Two directions, one premise</h3>
+      <p><strong>FlowEdit</strong> — a breath becomes an instrument.</p>
+      <p><strong>The Concatenator</strong> — a known song is rebuilt out of breath.</p>
+      <p style="margin-bottom:0">Opposite directions across the same gap, and the second one turned out to be the more legible demo.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 5 ============================================================ -->
+<section class="slide top" data-notes="Everything downstream is trained on us. That is a deliberate choice — no scraped voice data in anything that reaches the stage.">
+<div class="wrap">
+  <p class="eyebrow">17 July · session one</p>
+  <h2>Grisha, alone in a room, for forty-four minutes</h2>
+  <p class="sub">44 configurations × 3 takes. The systematic pass that everything else was built on.</p>
+  <div class="cols">
+    <div>
+      <div class="kv"><b>Breathing</b><span>{pp, mp} × {medium, slow} × {transparent, breathy}</span></div>
+      <div class="kv"><b>Humming</b><span>C4 D4 G4 A4 D5 E5 × {pp, mp}</span></div>
+      <div class="kv"><b>Open vowel</b><span>"oh" and "ah", same pitches × {pp, mp}</span></div>
+      <div class="kv"><b>Transitions</b><span>breath→hum, hum→open — the arc of the piece, in miniature</span></div>
+      <div class="cliphead">From the session</div>
+      <div class="clip"><span class="lab"><b>breathing</b>, medium</span><audio controls preload="none" src="media/audio/jul17_breath.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>humming</b></span><audio controls preload="none" src="media/audio/jul17_hum.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>hum → open vowel</b></span><audio controls preload="none" src="media/audio/jul17_open.mp3"></audio></div>
+    </div>
+    <div>
+      <div class="slot"><div class="tag">Photo slot</div><p>17 July session.</p></div>
+      <p style="margin-top:1.2em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        Why so systematic: a model trained on one person's breath needs to see the whole range of that breath —
+        dynamics, speed, and how much air is in the tone — or it collapses to whatever was most common in the take.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 6 ============================================================ -->
+<section class="slide top" data-notes="The group day. Per-performer stems are the technical thing that matters here — they are what makes the four-voice work possible two months later.">
+<div class="wrap">
+  <p class="eyebrow">23 July · session two</p>
+  <h2>The whole group</h2>
+  <p class="sub">Anna, Grisha, Raymond, Sora, Josh, Jon. 11 takes, ~86 minutes, recorded with per-performer stems as well as stereo mixes.</p>
+  <div class="cols">
+    <div>
+      <div class="cliphead">Takes</div>
+      <div class="clip"><span class="lab"><b>breathing</b> — group</span><audio controls preload="none" src="media/audio/jul23_breath.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>chord</b> — group</span><audio controls preload="none" src="media/audio/jul23_chord.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>chord</b> — Anna's stem</span><audio controls preload="none" src="media/audio/jul23_anna.mp3"></audio></div>
+      <p style="margin-top:1em">The stems are the consequential part. Because every performer was captured separately, the same session later supports <strong>one filter per voice</strong> — four independent morphs panned across the field — instead of one filter over a mix.</p>
+    </div>
+    <div>
+      <div class="slot"><div class="tag">Photo slot</div><p>23 July, the big group day. Anna has photos from this one.</p></div>
+      <p style="margin-top:1.2em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        This session became the <strong style="color:var(--dim)">voice-v2</strong> training set (56 solo takes, five performers, sung takes de-bled)
+        and the primary Concatenator corpus.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 7 ============================================================ -->
+<section class="slide top" data-notes="The harmonium day. Note that the instrument is the thing Grisha named as the analogue of lungs — so this session is training data for the target side of every morph.">
+<div class="wrap">
+  <p class="eyebrow">30 July · session three</p>
+  <h2>Harmonium</h2>
+  <p class="sub">Jon, Joel and Raymond; Grisha and Sora joined later. 346 files down to 24 curated clips.</p>
+  <div class="cols">
+    <div>
+      <div class="cliphead">From the session</div>
+      <div class="clip"><span class="lab"><b>F</b>, very long</span><audio controls preload="none" src="media/audio/jul30_harm_long.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>F</b>, five aperiodic</span><audio controls preload="none" src="media/audio/jul30_harm_aper.mp3"></audio></div>
+      <p style="margin-top:1em">Hand-pumped bellows, breath-controlled swells, and a reed that keeps sounding after the hand stops — the reason Grisha reached for it as an analogue of lungs, and the reason it is the target side of nearly every morph we run.</p>
+      <p style="color:var(--faint)">A fourth session on 18 August is recorded but not yet bounced — one 18-minute take at 96 kHz with no take boundaries, so it is out of the corpora until it is cut.</p>
+    </div>
+    <div>
+      <img src="media/img/jul30_harmonium.jpg" alt="Three people sitting on a rug around a harmonium in the studio, close-miked, 30 July 2026" style="width:100%;height:auto;max-height:62vh;object-fit:contain;border-radius:10px;border:1px solid var(--line);display:block">
+      <p style="margin-top:.55em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">On the floor around the instrument, 30 July. Close-miked in the music-center studio.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 8 ============================================================ -->
+<section class="slide top" data-notes="Method interlude. The one sentence that matters: it never inverts the recording, it walks a difference between two velocity estimates, which is why the timing of the original survives.">
+<div class="wrap">
+  <p class="eyebrow">Method · interlude one</p>
+  <h2>What FlowEdit does</h2>
+  <p class="sub">Give it a recording and two prompts — what it <em>is</em>, and what it should <em>become</em>.</p>
+  <svg class="diagram" viewBox="0 0 1000 300" role="img" aria-label="FlowEdit: at each step, estimate source and target velocity and integrate the difference">
+    <defs>
+      <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+        <path d="M0,0 L7,3.2 L0,6.4 z" fill="#5fb3a6"/></marker>
+      <marker id="arA" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+        <path d="M0,0 L7,3.2 L0,6.4 z" fill="#d9a441"/></marker>
+    </defs>
+    <text x="0" y="26" fill="#9aa3ad" font-size="15" font-family="system-ui">at every one of 20 steps</text>
+
+    <rect x="0" y="52" width="196" height="62" rx="8" fill="#14181d" stroke="#262c34"/>
+    <text x="16" y="79" fill="#ecebe7" font-size="16" font-family="system-ui">your recording</text>
+    <text x="16" y="100" fill="#5d6873" font-size="13" font-family="system-ui">breath, 60 s</text>
+
+    <path d="M204,83 L262,83" stroke="#5fb3a6" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="272" y="18" width="300" height="60" rx="8" fill="#14181d" stroke="#3a4450"/>
+    <text x="288" y="42" fill="#ecebe7" font-size="15" font-family="system-ui">velocity under the SOURCE prompt</text>
+    <text x="288" y="63" fill="#5d6873" font-size="13" font-family="system-ui">"a person breathing deeply and slowly…"</text>
+
+    <rect x="272" y="94" width="300" height="60" rx="8" fill="#14181d" stroke="#3a4450"/>
+    <text x="288" y="118" fill="#ecebe7" font-size="15" font-family="system-ui">velocity under the TARGET prompt</text>
+    <text x="288" y="139" fill="#5d6873" font-size="13" font-family="system-ui">"a solo harmonium sustaining a warm drone…"</text>
+
+    <path d="M580,48 L636,72" stroke="#5fb3a6" stroke-width="1.6" marker-end="url(#ar)"/>
+    <path d="M580,124 L636,100" stroke="#5fb3a6" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <circle cx="668" cy="86" r="27" fill="#14181d" stroke="#d9a441" stroke-width="1.6"/>
+    <text x="668" y="93" fill="#d9a441" font-size="22" font-family="system-ui" text-anchor="middle">−</text>
+    <text x="668" y="139" fill="#9aa3ad" font-size="13" font-family="system-ui" text-anchor="middle">the difference</text>
+
+    <path d="M698,86 L760,86" stroke="#d9a441" stroke-width="1.6" marker-end="url(#arA)"/>
+    <rect x="770" y="52" width="222" height="68" rx="8" fill="#1b1509" stroke="#d9a441"/>
+    <text x="786" y="80" fill="#ecebe7" font-size="16" font-family="system-ui">integrate, step by step</text>
+    <text x="786" y="102" fill="#9aa3ad" font-size="13" font-family="system-ui">timing stays · timbre travels</text>
+
+    <line x1="0" y1="196" x2="1000" y2="196" stroke="#262c34"/>
+    <text x="0" y="228" fill="#ecebe7" font-size="16" font-family="system-ui">No inversion.</text>
+    <text x="112" y="228" fill="#9aa3ad" font-size="16" font-family="system-ui">The recording is never encoded back into noise and re-generated — which is what usually</text>
+    <text x="0" y="252" fill="#9aa3ad" font-size="16" font-family="system-ui">destroys the phrasing. It walks a path from where your audio is toward where the target prompt lives, and</text>
+    <text x="0" y="276" fill="#9aa3ad" font-size="16" font-family="system-ui">you can stop anywhere along it. Those stopping points are the morph.</text>
+  </svg>
+  <p class="cite">FlowEdit: Inversion-Free Text-Based Editing Using Pre-Trained Flow Models — Kulikov, Kleiner, Huberman-Spiegelglas &amp; Michaeli, 2024. <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a> · Running over Stable Audio 3 (`medium`), Stability AI.</p>
+</div>
+</section>
+
+<!-- 9b =========================================================== -->
+<section class="slide top" data-notes="The paper's own figure. Walk left to right: (a) the old way — go all the way up to noise and back down, which is where the structure gets lost. (c) FlowEdit never leaves the neighbourhood of the original. Tiger to cat is our breath to harmonium; the pose and background that survive are our phrasing and timing.">
+<div class="wrap">
+  <p class="eyebrow">Method · interlude one, continued</p>
+  <h2>FlowEdit, as illustrated in the original paper</h2>
+  <img src="media/img/flowedit_fig1.png" alt="FlowEdit paper Figure 1: (a) editing by ODE inversion, (b) reinterpretation of editing by inversion, (c) editing using FlowEdit — tiger to cat" style="width:100%;height:auto;max-height:46vh;object-fit:contain;border-radius:8px;background:#fff;padding:10px;display:block">
+  <div class="cols3" style="margin-top:1em">
+    <div class="card">
+      <h3>(a) The usual way</h3>
+      <p style="margin-bottom:0">Push the image all the way up to noise, then generate back down under the new prompt. The round trip is where the original's structure gets lost.</p>
+    </div>
+    <div class="card">
+      <h3>(b) Seen differently</h3>
+      <p style="margin-bottom:0">That same edit, re-read as accumulating the <strong>difference</strong> between the target and source velocities — the orange arrow — rather than as two separate journeys.</p>
+    </div>
+    <div class="card" style="border-color:var(--amber)">
+      <h3 style="color:var(--amber)">(c) FlowEdit</h3>
+      <p style="margin-bottom:0">Skip the trip to noise entirely. Start from the original and integrate only that difference. It never leaves the neighbourhood of what you gave it.</p>
+    </div>
+  </div>
+  <p class="cite"><strong style="color:var(--dim)">Tiger → cat is our breath → harmonium.</strong> What survives in their figure — the pose, the framing, the background — is what survives in ours: the phrasing, the timing, where each swell lands. Figure 1 from Kulikov et al., <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a>.</p>
+</div>
+</section>
+
+<!-- 9c =========================================================== -->
+<section class="slide top" data-notes="The technical slide. The load-bearing sentence is the noise cancellation: both velocities are evaluated on latents carrying the SAME noise draw, so the difference is a clean source-to-target direction. That is why intermediate points are listenable, and there is no equivalent construction for a noise-prediction diffusion model.">
+<div class="wrap">
+  <p class="eyebrow">Method · the specifics</p>
+  <h2>Why differencing two velocities works</h2>
+  <div class="cols">
+    <div class="card">
+      <h3>The construction</h3>
+      <p>Stable Audio 3 is a <strong>flow-matching</strong> model: the transformer predicts a <em>velocity</em>, not a denoised sample. Generation solves an ODE over noise level <code>t</code>:</p>
+      <p style="font-family:ui-monospace,Menlo,monospace;color:var(--amber);font-size:clamp(13px,1.3vw,17px)">dZ<sub>t</sub> / dt = V(Z<sub>t</sub>, t, C)</p>
+      <p>from <code>t=1</code> (noise) down to <code>t=0</code> (audio). Because the source and target velocities are evaluated on latents carrying the <strong>same noise draw</strong>, they contain roughly the same noise component — and it cancels in the difference:</p>
+      <p style="font-family:ui-monospace,Menlo,monospace;color:var(--amber);font-size:clamp(13px,1.3vw,17px)">V<sup>Δ</sup> = V(Ẑ<sup>tar</sup><sub>t</sub>, c<sub>tar</sub>) − V(Ẑ<sup>src</sup><sub>t</sub>, c<sub>src</sub>)</p>
+      <p style="margin-bottom:0">What is left is a pure "drive the source toward the target" direction. Integrate it starting from the <em>actual</em> source latent and nothing is ever pushed to noise — so <strong>every intermediate point decodes to listenable audio.</strong> That is what the morph slider plays. There is no comparably clean construction for a noise-prediction diffusion model.</p>
+    </div>
+    <div>
+      <div class="card">
+        <h3>What we actually run</h3>
+        <div class="kv"><b>steps</b><span>20, even schedule over <code>t</code></span></div>
+        <div class="kv"><b>n_avg</b><span>10 noise draws per step — a Monte-Carlo estimate of V<sup>Δ</sup>, for variance reduction</span></div>
+        <div class="kv"><b>cost</b><span>2 × 10 × 20 = <strong>400 transformer forwards</strong> per render</span></div>
+        <div class="kv"><b>guidance</b><span>asymmetric — source CFG 1.0 (unguided), target 5.0, or 9 when the prompt names a pitch</span></div>
+        <div class="kv"><b>latents</b><span>SAME-L: stereo 44.1 kHz, 4096× downsampling, 256 dims — 10 s becomes 216 latents</span></div>
+      </div>
+      <p style="margin-top:1em">Two velocity evaluations per step is also exactly the seam the LoRA binding lives in — one adapter set per evaluation. Three slides on.</p>
+      <p style="color:var(--faint)">And the autoencoder is a hard ceiling: FlowEdit happens entirely inside that latent space, so no adapter can recover what the encoder threw away. That fact decides an argument later.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 9 ============================================================ -->
+<section class="slide top" data-notes="Credit Nithya properly and out loud. Her hackathon server is the thing this entire strand is a fork of; my repo has since been detached and moved into the HAI-Res org, but the lineage is hers.">
+<div class="wrap">
+  <p class="eyebrow">Where this started</p>
+  <h2>Nithya's FlowEdit server</h2>
+  <p class="sub">Nithya Shikarpur built the FlowEdit server this whole strand descends from — a Gradio front end over Stability AI's Stable Audio 3. My repo began as a fork of it.</p>
+  <div class="cols">
+    <div>
+      <div class="kv"><b>Hers</b><span>FlowEdit wired to Stable Audio 3, web UI: upload audio, two prompts, steps and CFG</span></div>
+      <div class="kv"><b>Mine, since</b><span>multi-LoRA loading, per-pass binding, a JSON API, and a SuperCollider front end</span></div>
+      <div class="kv"><b>Still hers</b><span>the sampler architecture everything hangs off, and the FlowEdit patches it started from</span></div>
+      <p style="margin-top:1.2em">She is also leading a FlowEdit session for the class on 7 October, and advising on what can realistically run live.</p>
+    </div>
+    <div>
+      <div class="slot"><div class="tag">Screenshot slot</div><p>Nithya's Gradio interface. Needs the tunnel up and a server answering on 7882 — grab it next time you are connected.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 10 =========================================================== -->
+<section class="slide top" data-notes="Play the source, then the stock harmonium attempt. The point is not that it is bad — it is that it is generic. It sounds like the internet's average harmonium, not the instrument that was in the room on 30 July.">
+<div class="wrap">
+  <p class="eyebrow">22–23 July · before any training</p>
+  <h2>The stock model, prompts only</h2>
+  <p class="sub">Feed in a breath, ask for something else, and turn the prompt knobs. This is where it started — and the ceiling you hit quickly.</p>
+  <div class="cols">
+    <div>
+      <div class="cliphead">Source</div>
+      <div class="clip"><span class="lab"><b>breathing</b>, 17 July</span><audio controls preload="none" src="media/audio/jul17_breath.mp3"></audio></div>
+      <div class="cliphead">Stock Stable Audio 3, no LoRA</div>
+      <div class="clip"><span class="lab">→ <b>harmonium</b></span><audio controls preload="none" src="media/audio/stock_harm.mp3"></audio></div>
+      <div class="clip"><span class="lab">→ <b>dizi</b>, mournful tone</span><audio controls preload="none" src="media/audio/stock_dizi.mp3"></audio></div>
+      <div class="clip"><span class="lab">→ <b>ocean waves</b></span><audio controls preload="none" src="media/audio/stock_ocean.mp3"></audio></div>
+      <div class="clip"><span class="lab">hum → <b>lion</b></span><audio controls preload="none" src="media/audio/stock_lion.mp3"></audio></div>
+    </div>
+    <div class="card">
+      <h3>What this told us</h3>
+      <p><strong>The mechanism works.</strong> The breath's phrasing survives intact — every swell lands where the performer put it.</p>
+      <p><strong>The timbre is generic.</strong> Prompted for harmonium you get a plausible harmonium-shaped sound; you do not get <em>our</em> harmonium, and on the voice side you do not get a specific body's breath.</p>
+      <p>Broad targets fare better than close ones: ocean waves are convincing because nobody has a reference. A harmonium in the same room as a real one is not.</p>
+      <p style="margin-bottom:0">Prompt engineering could not close that gap. Training could.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 11 =========================================================== -->
+<section class="slide top" data-notes="Keep this short — it is the one slide with any ML vocabulary in it. Rank 16, DoRA, 1000 steps, on the medium base. And credit Michael Krzyzaniak for the aeolian and ebow material.">
+<div class="wrap">
+  <p class="eyebrow">August · training on ourselves</p>
+  <h2>Four small adapters</h2>
+  <p class="sub">A LoRA is a small trainable delta on a frozen model — you learn a low-rank correction instead of retraining. DoRA splits that correction into magnitude and direction, which holds up better at low rank.</p>
+  <div class="cols3">
+    <div class="card"><h3>voice-v2</h3><p>56 solo takes, five performers, 23 July. The source-side prior — what a person breathing sounds like <em>here</em>.</p></div>
+    <div class="card"><h3>harmonium-stereo-v1</h3><p>24 clips, 30 July. The target side of nearly every morph we run.</p></div>
+    <div class="card"><h3>aeolian-wind-v1 · fulgorian-ebow-v1</h3><p>7 and 13 segments, from Michael Krzyzaniak's recordings — with thanks. Grisha's other two timbral targets.</p></div>
+  </div>
+  <div style="display:flex;gap:clamp(24px,4vw,64px);margin-top:1.4em;flex-wrap:wrap">
+    <div><div class="big">16</div><div class="bigl">rank</div></div>
+    <div><div class="big">1000</div><div class="bigl">training steps</div></div>
+    <div><div class="big">4</div><div class="bigl">adapters, all on medium-base</div></div>
+    <div><div class="big">~6 GB</div><div class="bigl">GPU per render</div></div>
+  </div>
+  <p class="cite">LoRA — Hu et al., 2021, <a href="https://arxiv.org/abs/2106.09685">arXiv:2106.09685</a>. DoRA: Weight-Decomposed Low-Rank Adaptation — Liu et al., 2024, <a href="https://arxiv.org/abs/2402.09353">arXiv:2402.09353</a>. Aeolian and ebow source material courtesy of Michael Krzyzaniak.</p>
+</div>
+</section>
+
+<!-- 12 =========================================================== -->
+<section class="slide top" data-notes="The finding. Play all three. Naive stacking is muddy because the voice adapter contaminates the target estimate; the blend is a compromise that is worse than either commitment. Binary won by ear, and that verdict is what later makes the speed work possible.">
+<div class="wrap">
+  <p class="eyebrow">The finding</p>
+  <h2>Two adapters, three ways to combine them</h2>
+  <p class="sub">A morph makes two velocity estimates per step. Which adapter should be awake for which estimate?</p>
+  <div class="cols">
+    <div>
+      <div class="cliphead">Listen</div>
+      <div class="clip"><span class="lab"><b>1 · both, always</b><br><span style="color:var(--faint)">naive stacking</span></span><audio controls preload="none" src="media/audio/bind_naive.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>2 · soft blend</b><br><span style="color:var(--faint)">0.7 / 0.3 either way</span></span><audio controls preload="none" src="media/audio/bind_blend.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>3 · per-pass binding</b><br><span style="color:var(--faint)">voice on source, harmonium on target</span></span><audio controls preload="none" src="media/audio/bind_binary.mp3"></audio></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Binary wins, by ear</h3>
+        <p>With both adapters awake, the voice model contaminates the <em>target</em> estimate — the harmonium never fully arrives and the result is muddy.</p>
+        <p>The soft blend is worse than either commitment: it dilutes both estimates rather than choosing.</p>
+        <p style="margin-bottom:0">Binding each adapter to the pass it belongs to — voice only while estimating the source velocity, harmonium only for the target — is what makes a two-LoRA server usable at all.</p>
+      </div>
+      <p style="margin-top:1em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        This verdict has a second consequence, three slides on: if only 1 and 0 matter, per-pass binding is not a dial — it is a model swap, and model swaps can be baked ahead of time.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 13 =========================================================== -->
+<section class="slide top" data-notes="The recipe slide. The tail passthrough story is the one worth telling out loud: I heard breath at the end of finished morphs; nobody was measuring the end of the file. The measurement came after the ear, not instead of it.">
+<div class="wrap">
+  <p class="eyebrow">The recipe, and the traps</p>
+  <h2>What it takes to get a clean morph</h2>
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h3>Working configuration</h3>
+        <div class="kv"><b>steps · n_avg</b><span>20 · 10</span></div>
+        <div class="kv"><b>source CFG</b><span>1.0</span></div>
+        <div class="kv"><b>target CFG</b><span>5.0 — or <strong>9</strong> for a pitched target</span></div>
+        <div class="kv"><b>intermediates</b><span>9, even steps</span></div>
+        <div class="kv"><b>cost</b><span>low single-digit minutes for 60–100 s</span></div>
+      </div>
+      <p style="margin-top:1em"><strong>Pitch is promptable.</strong> Name a note in the target prompt and the render holds it — five times out of five in the evaluation, with CFG 9 the measured optimum for staying in the right octave.</p>
+    </div>
+    <div>
+      <div class="card" style="border-color:var(--rose)">
+        <h3 style="color:var(--rose)">The tail passthrough</h3>
+        <p>I kept hearing <strong>breath at the end of finished morphs</strong> — renders that were fully harmonium for a minute and then, quietly, were not.</p>
+        <p>Measuring it afterwards: correlation between the render and the original source sits near <strong>0.1</strong> for most of the file — and jumps to <strong>0.64</strong> over the last five seconds. The edit evaporates across roughly the final 10% of the render window.</p>
+        <p style="margin-bottom:0"><strong>Fix:</strong> render at least 125% of what you intend to keep, then crop back.</p>
+      </div>
+      <p style="margin-top:.9em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        No metric was contradicting my ears here — nobody was measuring the end of the file at all. The ear found it; the measurement localized it and produced the fix.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 14 =========================================================== -->
+<section class="slide top" data-notes="Demo the ladder live if the room is quiet enough — step down from t1.0 to final and let people hear the passage. Every control in the real interface is stepped, no drag feedback, for the same reason this deck has no animation.">
+<div class="wrap">
+  <p class="eyebrow">The interface</p>
+  <h2>Playing the morph in SuperCollider</h2>
+  <p class="sub">Record or load → set the trim → write the two prompts → GENERATE → then move through the trajectory by hand. The render returns nine intermediate points along the path, all sharing one timeline.</p>
+  <div class="cols">
+    <div>
+      <div class="ladder" id="ladder">
+        <div class="state">Position <b id="ladpos">0 — your recording</b></div>
+        <div class="steps" id="ladsteps"></div>
+        <audio id="ladaudio" controls preload="none" src="media/audio/morph_src.mp3" style="max-width:100%"></audio>
+      </div>
+      <p style="margin-top:.9em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        Breath → harmonium, 24 seconds, one seed. Step across it and the same phrasing stays put while the timbre travels.</p>
+    </div>
+    <div>
+      <div class="slot"><div class="tag">Video slot</div><p>The SuperCollider morph GUI demo you recorded — point me at the file and I'll wire it in here.</p></div>
+      <div class="card" style="margin-top:.8em">
+        <h3>Built for a body that does not like motion</h3>
+        <p style="margin-bottom:0">Playhead at 2 Hz, counters at 1 Hz, no animated meters, numeric trim fields instead of drag handles. Stepped controls throughout — the same reason this deck has no transitions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 15 =========================================================== -->
+<section class="slide top" data-notes="Origin story first: Grisha liked a specific track and wanted it in the piece. Rather than play it, rebuild it out of us. That is the whole idea in one sentence.">
+<div class="wrap">
+  <p class="eyebrow">Method · interlude two</p>
+  <h2>The Concatenator</h2>
+  <p class="lead">Grisha had a track she liked and wanted it in the piece. Instead of playing it, we rebuilt it out of our own breath.</p>
+  <div class="cols" style="margin-top:1.1em">
+    <div>
+      <p><strong>Concatenative musaicing:</strong> given a corpus of audio and a target recording, play grains of the corpus so that, moment by moment, they add up to the target. What comes out has the <strong>target's pitch and rhythm</strong> and the <strong>corpus's timbre</strong>.</p>
+      <p>Point it at a song and a pile of our voices, and the song arrives sung entirely in breath — recognisably the track, recognisably us.</p>
+      <p>It is the same premise as FlowEdit from the opposite direction: not breath becoming an instrument, but a piece of music being reassembled out of breath.</p>
+    </div>
+    <div class="card">
+      <h3>Why this one</h3>
+      <p><strong>Real-time by design</strong> — it was built to run live, which suits a live piece.</p>
+      <p><strong>It keeps corpus timbre.</strong> Like Driedger's <em>Let It Bee</em>, but online rather than offline.</p>
+      <p style="margin-bottom:0"><strong>It is legible.</strong> Anyone can hear what it is doing in about four seconds — which makes it a far better demo than a morph.</p>
+    </div>
+  </div>
+  <p class="cite">The Concatenator: A Bayesian Approach to Real-Time Concatenative Musaicing — Christopher J. Tralie &amp; Ben Cantil, ISMIR 2024. <a href="https://arxiv.org/abs/2411.04366">arXiv:2411.04366</a> · <a href="https://www.ctralie.com/TheConcatenator/supplementary/">supplementary audio</a> · Licensed <strong>CC BY-NC-ND</strong> — attribution required, no redistribution of modified versions. Antecedent: Driedger, Prätzlich &amp; Müller, "Let It Bee", ISMIR 2015.</p>
+</div>
+</section>
+
+<!-- 16 =========================================================== -->
+<section class="slide top" data-notes="The particle filter, in plain language. Hundreds of parallel guesses, reweighted every 23 milliseconds. Do not go deeper than this unless someone asks.">
+<div class="wrap">
+  <p class="eyebrow">Method · interlude two, continued</p>
+  <h2>How it decides what to play</h2>
+  <p class="sub">The hard part is choosing, 43 times a second, which fragments of an 86-minute corpus to play together.</p>
+  <svg class="diagram" viewBox="0 0 1000 250" role="img" aria-label="A particle filter: many parallel guesses, weighted against the incoming target, resampled each frame">
+    <text x="0" y="22" fill="#9aa3ad" font-size="15" font-family="system-ui">every 23 ms</text>
+    <rect x="0" y="44" width="188" height="58" rx="8" fill="#14181d" stroke="#262c34"/>
+    <text x="16" y="70" fill="#ecebe7" font-size="15" font-family="system-ui">what arrives now</text>
+    <text x="16" y="90" fill="#5d6873" font-size="13" font-family="system-ui">one frame of the target</text>
+
+    <path d="M196,73 L252,73" stroke="#5fb3a6" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <rect x="262" y="18" width="330" height="112" rx="8" fill="#14181d" stroke="#3a4450"/>
+    <text x="278" y="44" fill="#ecebe7" font-size="15" font-family="system-ui">hundreds of parallel guesses</text>
+    <text x="278" y="66" fill="#5d6873" font-size="13" font-family="system-ui">each one: "these grains of our corpus,</text>
+    <text x="278" y="85" fill="#5d6873" font-size="13" font-family="system-ui">played together, sound like that"</text>
+    <g fill="#d9a441">
+      <circle cx="292" cy="110" r="4"/><circle cx="312" cy="106" r="6"/><circle cx="334" cy="112" r="3"/>
+      <circle cx="356" cy="105" r="7"/><circle cx="380" cy="111" r="4"/><circle cx="402" cy="107" r="5"/>
+      <circle cx="424" cy="112" r="3"/><circle cx="448" cy="104" r="8"/><circle cx="474" cy="111" r="4"/>
+      <circle cx="498" cy="108" r="5"/><circle cx="522" cy="112" r="3"/><circle cx="548" cy="106" r="6"/>
+    </g>
+
+    <path d="M600,73 L656,73" stroke="#5fb3a6" stroke-width="1.6" marker-end="url(#ar)"/>
+    <rect x="666" y="18" width="334" height="112" rx="8" fill="#1b1509" stroke="#d9a441"/>
+    <text x="682" y="44" fill="#ecebe7" font-size="15" font-family="system-ui">score them, keep the good ones,</text>
+    <text x="682" y="66" fill="#ecebe7" font-size="15" font-family="system-ui">breed variations, play the winners</text>
+    <text x="682" y="94" fill="#9aa3ad" font-size="13" font-family="system-ui">guesses that keep matching survive; the rest die out</text>
+
+    <line x1="0" y1="164" x2="1000" y2="164" stroke="#262c34"/>
+    <text x="0" y="194" fill="#ecebe7" font-size="16" font-family="system-ui">Two knobs you actually play:</text>
+    <text x="228" y="194" fill="#9aa3ad" font-size="16" font-family="system-ui">how strongly it prefers to keep running along the corpus (stickiness</text>
+    <text x="0" y="218" fill="#9aa3ad" font-size="16" font-family="system-ui">— long grabs versus fine grain), and how hard it chases the target (chase speed). Both are safe to move mid-stream.</text>
+    <text x="0" y="242" fill="#5d6873" font-size="15" font-family="system-ui">Cost per frame does not depend on how big the corpus is — memory does.</text>
+  </svg>
+</div>
+</section>
+
+<!-- 16b ========================================================== -->
+<section class="slide top" data-notes="The technical slide. The reframing is the contribution: corpus window indices as hidden states, the target frame as an observation. Note that the activations are NOT part of the hidden state — they are refit per particle per frame. And the complexity argument is the whole reason this is real-time.">
+<div class="wrap">
+  <p class="eyebrow">Method · the specifics</p>
+  <h2>A factorial HMM, filtered</h2>
+  <div class="cols">
+    <div class="card">
+      <h3>State, transition, observation</h3>
+      <p><strong>Hidden state.</strong> A <code>p</code>-sparse vector of corpus window indices — which <code>p</code> windows are active right now. <code>p</code> <em>is</em> the polyphony. Their mixing weights are <strong>not</strong> hidden: they are refit every frame by <code>L=10</code> multiplicative KL-NMF updates on just those <code>p</code> columns.</p>
+      <p><strong>Transition.</strong> A factorial HMM — each component independently advances one corpus frame with probability <code>p_d</code>, or jumps to a uniformly random window. With <code>p_d ∈ [0.9, 0.99]</code> continuing beats jumping, and grain lengths fall out <em>geometric</em> with mean <code>sr / (hop·(1−p_d))</code>. That is Driedger's diagonal enhancement expressed as a <strong>prior</strong> instead of a post-hoc filter.</p>
+      <p style="margin-bottom:0"><strong>Observation.</strong> A softmax over the negative KL fit of each particle's mixture to the incoming frame, at temperature <code>τ</code>. Raising <code>τ</code> weights the observation over the prior — tighter chase, shorter grains. The two knobs pull against each other, and that tension is the instrument.</p>
+    </div>
+    <div>
+      <div class="card">
+        <h3>The filter, and why it is fast</h3>
+        <p><code>P</code> particles, each weighted by its observation likelihood. Degeneracy is watched with the effective sample size <code>n_eff = 1/Σw²</code>; below <code>0.1P</code> it resamples by stochastic universal sampling.</p>
+        <p>Synthesis averages over the <strong>top 10% of particles</strong>, skips windows reused within the last few steps, then mixes the corpus <strong>waveforms</strong> — not spectra — with Hann overlap-add. No vocoder, no resynthesis: the grains are the recordings, which is precisely why the timbre stays ours.</p>
+        <p style="margin-bottom:0">Driedger's NMF is <code>O(L·M·N·T)</code>, linear in corpus length. This is <code>O(L·P·M·p·T)</code> — <strong>no N term at all.</strong></p>
+      </div>
+      <div class="card" style="margin-top:.8em;border-color:var(--rose)">
+        <h3 style="color:var(--rose)">Where it breaks</h3>
+        <p style="margin-bottom:0">Three-part harmony defeats it. Notes drop out at random and always will — the filter rotates through corpus positions stochastically. Low bass fails on resolution: a 2048 window is 21.5 Hz, so C1 is unreachable. The authors' answer to the dropouts is aesthetic; believe them, but know it is a limit.</p>
+      </div>
+      <p style="margin-top:.8em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        Our budget: hop 1024 at 44.1 kHz = <strong style="color:var(--dim)">23.2 ms</strong> per frame. Measured cost <code>≈ 1.61 + 0.00197·(P·p)</code> ms, so at <code>P=300</code> the real-time ceiling is about <code>p=36</code>.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 17 =========================================================== -->
+<section class="slide top" data-notes="Play the target first, then breath-only, then the full corpus, then four-voice. If time is short play target then four-voice. Anna's reaction is worth quoting — it is what pulled Nithya into the Monday meeting.">
+<div class="wrap">
+  <p class="eyebrow">21–23 August</p>
+  <h2>A song, rebuilt out of us</h2>
+  <p class="sub">Bill Converse, "Phantom Pain" — 5 minutes 20, reconstructed entirely from the 23 July voice corpus. Also: ocean waves as a target.</p>
+  <div class="cols">
+    <div>
+      <div class="cliphead">The target</div>
+      <div class="clip"><span class="lab"><b>Phantom Pain</b> — original</span><audio controls preload="none" src="media/audio/target_pp.mp3"></audio></div>
+      <div class="cliphead">Rebuilt from our voices</div>
+      <div class="clip"><span class="lab"><b>breath only</b></span><audio controls preload="none" src="media/audio/cat_breath_pp.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>breath + hum + sung</b></span><audio controls preload="none" src="media/audio/cat_full_pp.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>four voices</b>, panned</span><audio controls preload="none" src="media/audio/cat_4voice_pp.mp3"></audio></div>
+      <div class="cliphead">Ocean waves as the target</div>
+      <div class="clip"><span class="lab"><b>four voices</b></span><audio controls preload="none" src="media/audio/cat_4voice_ocean.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>breath only</b></span><audio controls preload="none" src="media/audio/cat_breath_ocean.mp3"></audio></div>
+    </div>
+    <div>
+      <p class="quote">These are crazy awesome!</p>
+      <p class="attrib">— Anna, twenty minutes after the demos went out, 23 August</p>
+      <div class="card" style="margin-top:1.2em">
+        <h3>Four voices, four filters</h3>
+        <p style="margin-bottom:0">The four-voice renders run one independent filter per performer — Anna, Grisha, Raymond and Sora each rebuilding the same target from their own stems, panned across the field. Only possible because 23 July was tracked with per-performer stems.</p>
+      </div>
+      <p style="margin-top:1em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        Corpus: 96 minutes, our sessions only. Nothing scraped goes anywhere near the stage.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 18 =========================================================== -->
+<section class="slide top" data-notes="This is the compositional slide. The grain morph is the effect Jon asked for and could not get out of the filter itself; the pointer ramp is the other parameter that turned out to be musical rather than technical.">
+<div class="wrap">
+  <p class="eyebrow">Turning the knobs into form</p>
+  <h2>Two parameters that turned out to be compositional</h2>
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h3>Long grabs → fine grain</h3>
+        <p>Start with ten-second chunks of somebody's breath, end with grains a fifteenth of a second long — the piece resolving from recognisable human sounds into a texture that <em>becomes</em> the song.</p>
+        <p>The filter itself cannot do this, and it is worth knowing why: <code>p_d</code> governs the hidden particle states, not the window that actually gets played. The output choice runs through a diagonal-promotion heuristic with a fixed ten-frame (232 ms) look-back, so segments cap near <strong>0.6 s</strong> however you set the stickiness.</p>
+        <p style="margin-bottom:0">So the long grabs are synthesised directly instead — <strong>631 holds, 10.0 s down to 0.07 s</strong>, a 143× range against the filter's 8×.</p>
+        <p style="margin-bottom:0;color:var(--faint)">Offline only: 4.3× slower than real time. Pre-render, not a stage control.</p>
+      </div>
+      <div class="cliphead">Long → short, across one render</div>
+      <div class="clip"><span class="lab">early — <b>long grabs</b></span><audio controls preload="none" src="media/audio/cat_morph_early.mp3"></audio></div>
+      <div class="clip"><span class="lab">late — <b>fine grain</b></span><audio controls preload="none" src="media/audio/cat_morph_late.mp3"></audio></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Polyphony <code>p</code>, as a ramp</h3>
+        <p>The same <code>p</code> from the state vector — how many corpus windows sound at once — ramped <strong>1 → 2 → 5 → 10 → 20 → 50</strong> across five minutes, as six fixed-<code>p</code> renders crossfaded together.</p>
+        <p>Rhythmic lock to the target saturates around ten — one and two are effectively unlocked, and past twenty nothing further is gained. What keeps changing is <strong>density and width</strong>: higher counts fill the silences and widen the stereo image rather than getting louder.</p>
+        <p style="margin-bottom:0">So it reads as a texture control, not a fidelity control. Cost is linear in <code>P·p</code>, which puts <code>p=50</code> outside real time — that one is a pre-render.</p>
+      </div>
+      <div class="cliphead">Across the ramp</div>
+      <div class="clip"><span class="lab">early — <b>sparse</b></span><audio controls preload="none" src="media/audio/pramp_early.mp3"></audio></div>
+      <div class="clip"><span class="lab">late — <b>dense</b></span><audio controls preload="none" src="media/audio/pramp_late.mp3"></audio></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 19 =========================================================== -->
+<section class="slide top" data-notes="Be honest that this one is unresolved. It is a good idea without a home in the piece yet.">
+<div class="wrap">
+  <p class="eyebrow">A third idea, unplaced</p>
+  <h2>Latent collage</h2>
+  <p class="sub">Segment a recording at its breath and silence boundaries, rearrange whole segments in the autoencoder's latent space, decode. Same material, new form.</p>
+  <div class="cols">
+    <div>
+      <video controls preload="metadata" poster="media/img/latent_collage_poster.jpg" src="media/video/latent_collage_demo.mp4"></video>
+      <p style="margin-top:.6em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">The SuperCollider interface: load, segment, choose an ordering, generate.</p>
+    </div>
+    <div>
+      <p><strong>FlowEdit changes what a sound is. This changes when it happens.</strong> There is no diffusion in the core path — segments are rearranged and decoded — so the timbre comes through completely intact. An optional light pass can heal the seams.</p>
+      <p>Which makes it the natural tool for the parts of the piece where the material should stay unmistakably a person's voice, and only the <em>form</em> should be strange.</p>
+      <div class="card" style="margin-top:1em">
+        <h3>Where it fits — open</h3>
+        <p style="margin-bottom:0">I don't yet know what to do with this in the piece. It will go in somewhere; the question is whether it operates on the live capture during the performance or produces fixed material beforehand.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 20 =========================================================== -->
+<section class="slide top" data-notes="Say plainly that this is the least interesting work and the most necessary. The honest headline is that we are not fast enough yet for comfortable live use.">
+<div class="wrap">
+  <p class="eyebrow">The unglamorous half</p>
+  <h2>Making it fast enough to perform</h2>
+  <p class="sub">None of this is interesting, and all of it stands between a render and a performance.</p>
+  <div class="cols3">
+    <div class="card">
+      <h3>Bake the adapters in</h3>
+      <p>Since per-pass binding is binary, it is not a dial but a model swap — so the adapters can be merged into two copies of the network ahead of time and swapped per pass.</p>
+      <p style="margin-bottom:0"><strong>Bit-exact</strong> against the live-binding server — zero differing samples — and <strong>1.23× faster</strong> at production length.</p>
+    </div>
+    <div class="card">
+      <h3>The small model, rejected</h3>
+      <p>A smaller model would have been much faster. Its autoencoder is a hard ceiling that no amount of training recovers, and the gap is widest on exactly our material — sung voice, harmonium, ebow.</p>
+      <p style="margin-bottom:0">Tested, listened to, <strong>dropped</strong>. "The small model really sounds pretty bad."</p>
+    </div>
+    <div class="card">
+      <h3>The Concatenator, live</h3>
+      <p>Runs comfortably inside its real-time budget on the Mac, CPU only, with headroom to spare. The knobs are safe to move mid-stream.</p>
+      <p style="margin-bottom:0">Memory, not speed, is what limits corpus length — around 7 GB per hour of stereo.</p>
+    </div>
+  </div>
+  <p style="margin-top:1.3em"><strong>Where this actually stands:</strong> the Concatenator is performable now. FlowEdit is not — a lane still takes tens of seconds, which makes it a near-real-time instrument at best. Closing that gap, or designing around it, is the open problem between now and October.</p>
+</div>
+</section>
+
+<!-- 21 =========================================================== -->
+<section class="slide top" data-notes="Show the rig. Be clear it is a work in progress built for tomorrow's studio session, not a finished instrument.">
+<div class="wrap">
+  <p class="eyebrow">Where it all lands · work in progress</p>
+  <h2>One window, four lanes</h2>
+  <p class="sub">Built 27 August for the studio session on the 28th. Everything above, reachable from a single SuperCollider window.</p>
+  <div class="cols">
+    <div>
+      <div class="kv"><b>Capture strip</b><span>four lanes, arm and record together, trim per lane, long-form corpus recording</span></div>
+      <div class="kv"><b>FlowEdit tab</b><span>preset prompts with a note field, four morphs generated in parallel across a server pool, one morph slider per lane</span></div>
+      <div class="kv"><b>Concatenator tab</b><span>a corpus and a live filter per lane; chase speed, grain and wet/dry as live knobs</span></div>
+      <div class="kv"><b>Hardware</b><span>nanoKONTROL2 — sliders are morph position or chase speed depending on the tab</span></div>
+      <div class="kv"><b>Throughout</b><span>stepped displays, no animation, no drag feedback</span></div>
+    </div>
+    <div>
+      <div class="slot"><div class="tag">Video slot — to shoot</div><p><strong>1.</strong> Arm four lanes, generate, then sweep one morph slider 0 → 10 so the timbre travels while you watch it.</p></div>
+      <div class="slot"><div class="tag">Video slot — to shoot</div><p><strong>2.</strong> A take running through the Concatenator while you move <em>wet</em> and <em>chase speed</em>.</p></div>
+      <div class="slot"><div class="tag">Video slot — to shoot</div><p><strong>3.</strong> Hands on the nanoKONTROL2 during either — a cutaway that makes it read as an instrument rather than a GUI.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 22 =========================================================== -->
+<section class="slide top" data-notes="Close on the open questions, not the achievements. Then credits.">
+<div class="wrap">
+  <p class="eyebrow">Eight weeks out</p>
+  <h2>What's next, and what's open</h2>
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h3>Next</h3>
+        <div class="kv"><b>28 August</b><span>studio session — first time all four lanes meet real microphones</span></div>
+        <div class="kv"><b>September</b><span>eleven rehearsals, ~30 hours, building the piece with the dancers</span></div>
+        <div class="kv"><b>30 September</b><span>Alan Macy and Mark-David Hosale visit the class</span></div>
+        <div class="kv"><b>3 October</b><span>tech at 08:30 — then two workshops and two performances, 14:00–19:00</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-color:var(--amber)">
+        <h3 style="color:var(--amber)">Open questions</h3>
+        <ul style="margin-bottom:0">
+          <li>How much live processing is realistic on the day — and how much should be pre-rendered?</li>
+          <li>What will the performers hear in-ear, and can that itself carry the score?</li>
+          <li>Consent: five people's voices are in every corpus. What leaves the group, and who decides?</li>
+          <li>Where latent collage fits, if anywhere.</li>
+          <li>Whether I will be running one of the two performances.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p class="cite" style="margin-top:1.4em">
+    <strong style="color:var(--dim)">Credits.</strong>
+    Supra-Organism is choreographed by Grisha Coleman, with Anna Huang; coordination by Amira Samiy; production by MIT Future Fest.
+    Voices: Anna Huang, Grisha Coleman, Raymond, Sora, Josh, Jon Myers. Harmonium: Jon Myers, Joel, Raymond, Grisha Coleman, Sora.
+    The FlowEdit server this work forks from was built by <strong style="color:var(--dim)">Nithya Shikarpur</strong>.
+    Aeolian harp and ebow recordings courtesy of <strong style="color:var(--dim)">Michael Krzyzaniak</strong>.<br><br>
+    FlowEdit — Kulikov et al., <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a> ·
+    Stable Audio 3 — Stability AI ·
+    LoRA — Hu et al., <a href="https://arxiv.org/abs/2106.09685">arXiv:2106.09685</a> ·
+    DoRA — Liu et al., <a href="https://arxiv.org/abs/2402.09353">arXiv:2402.09353</a> ·
+    The Concatenator — Tralie &amp; Cantil, ISMIR 2024, <a href="https://arxiv.org/abs/2411.04366">arXiv:2411.04366</a>, used under <strong style="color:var(--dim)">CC BY-NC-ND</strong> ·
+    Let It Bee — Driedger et al., ISMIR 2015.
+  </p>
+</div>
+</section>
+
+</div>
+
+<div id="help">← → slides · N notes · P print</div>
+<div id="title-bar">Supra-Organism · Jon Myers · HAI-Res</div>
+<div id="hud"></div>
+<div id="notes"><h4>Speaker notes</h4><p id="notes-body"></p></div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var hud = document.getElementById('hud');
+  var notes = document.getElementById('notes');
+  var notesBody = document.getElementById('notes-body');
+  var i = 0;
+
+  function stopAllAudio(){
+    document.querySelectorAll('audio, video').forEach(function(m){ if(!m.paused) m.pause(); });
+  }
+  function show(n){
+    if(n < 0 || n >= slides.length) return;
+    stopAllAudio();
+    slides[i].classList.remove('on');
+    i = n;
+    slides[i].classList.add('on');
+    slides[i].scrollTop = 0;
+    hud.textContent = (i+1) + ' / ' + slides.length;
+    notesBody.textContent = slides[i].getAttribute('data-notes') || '—';
+    try { location.hash = String(i+1); } catch(e){}
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if(e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); show(i+1); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); show(i-1); }
+    else if(e.key === 'Home'){ show(0); }
+    else if(e.key === 'End'){ show(slides.length-1); }
+    else if(e.key === 'n' || e.key === 'N'){ notes.classList.toggle('on'); }
+    else if(e.key === 'p' || e.key === 'P'){ window.print(); }
+  });
+
+  // stepped morph ladder — discrete positions, no drag, nothing animated
+  var LAD = [
+    ['0 — your recording',        'morph_src'],
+    ['1',  'ladder_t1p0'],  ['2',  'ladder_t0p9'], ['3', 'ladder_t0p75'],
+    ['4',  'ladder_t0p65'], ['5',  'ladder_t0p5'], ['6', 'ladder_t0p4'],
+    ['7',  'ladder_t0p3'],  ['8',  'ladder_t0p15'],['9', 'ladder_t0p05'],
+    ['10 — full harmonium',       'morph_final']
+  ];
+  var steps = document.getElementById('ladsteps');
+  var lpos  = document.getElementById('ladpos');
+  var laud  = document.getElementById('ladaudio');
+  if(steps){
+    LAD.forEach(function(entry, idx){
+      var b = document.createElement('button');
+      b.textContent = idx === 0 ? 'source' : (idx === LAD.length-1 ? 'final' : String(idx));
+      b.setAttribute('aria-pressed', idx === 0 ? 'true' : 'false');
+      b.addEventListener('click', function(){
+        var wasPlaying = !laud.paused;
+        steps.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+        b.setAttribute('aria-pressed','true');
+        lpos.textContent = entry[0];
+        var t = laud.currentTime;
+        laud.src = 'media/audio/' + entry[1] + '.mp3';
+        laud.addEventListener('loadedmetadata', function once(){
+          laud.removeEventListener('loadedmetadata', once);
+          if(t < laud.duration) laud.currentTime = t;
+          if(wasPlaying) laud.play();
+        });
+      });
+      steps.appendChild(b);
+    });
+  }
+
+  var start = parseInt((location.hash||'').replace('#',''), 10);
+  slides[0].classList.add('on');
+  show(isNaN(start) ? 0 : Math.min(Math.max(start-1,0), slides.length-1));
+})();
+</script>
+</body>
+</html>

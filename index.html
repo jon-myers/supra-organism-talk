@@ -42,9 +42,18 @@ a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(95,179,166
 ul{margin:0 0 1em;padding-left:1.15em;max-width:44em}
 li{font-size:clamp(14px,1.4vw,19px);line-height:1.5;margin-bottom:.5em}
 li::marker{color:var(--faint)}
+sup.fn{font-size:.62em;vertical-align:super;color:var(--faint)}
+.cite .fnline{display:block;padding-left:1.1em;text-indent:-1.1em;margin-top:.3em}
+.cite .fnline:first-child{margin-top:0}
+.methods{margin-top:1em}
+.methods li{font-size:clamp(17px,2vw,27px);line-height:1.55;margin-bottom:.35em}
 
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,52px);align-items:start}
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,32px);align-items:start}
+.figrow{display:grid;grid-template-columns:auto 1fr;gap:clamp(18px,2.4vw,36px);align-items:center}
+.figrow>img{width:clamp(150px,16vw,215px);height:auto;object-fit:contain;border-radius:8px;
+  border:1px solid var(--line);display:block}
+@media (max-width:900px){.figrow{grid-template-columns:1fr}.figrow>img{width:min(100%,240px)}}
 @media (max-width:900px){.cols,.cols3{grid-template-columns:1fr}}
 
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
@@ -126,128 +135,120 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
 <!-- 1 ============================================================ -->
 <section class="slide" data-notes="Set the frame in two sentences: this is a performance first, an engineering project second. Everything that follows is in service of a 30-minute dance work on October 3rd.">
 <div class="wrap">
-  <p class="eyebrow">HAI-Res · lab talk · 27 August 2026</p>
   <h1>Supra-Organism</h1>
-  <p class="lead" style="color:var(--dim)">Turning breath into instruments, and a known song back into breath — where the sound work stands eight weeks out.</p>
+  <p class="lead" style="color:var(--dim)">An embodied performance dissolving boundaries between body, space, and system.</p>
   <div style="margin-top:2.2em;font-size:clamp(13px,1.3vw,17px);color:var(--faint);line-height:1.7">
-    Jon Myers · Human–AI Resonance Group<br>
-    A performance by Grisha Coleman · MIT Future Fest, Little Kresge · two workshops, two performances, 3 October 2026<br>
-    Also Project 1 of <em style="color:var(--faint)">21M.369 Tuning Attention</em>
+    A performance by Grisha Coleman · MIT Future Fest, Little Kresge · two workshops, two performances, 3 October 2026
   </div>
 </div>
 </section>
 
 <!-- 2 ============================================================ -->
-<section class="slide" data-notes="Grisha's piece, not mine. My job is the sound system inside it. Note the harmonium line — she called it an analogue of lungs, too rich for one person to produce, which is exactly the gap a model can fill.">
+<section class="slide" data-notes="Grisha's piece, not mine — my job is the sound system inside it. Walk the loop out loud: sensors off the body, into the generative audio, out through four speakers, back into how the dancers time and feel the next phrase. The figure is from her MOCO paper: seven force transducers tie the performers to one overhead point, so they are mechanically coupled to each other before any of it becomes sound.">
 <div class="wrap">
   <p class="eyebrow">The piece</p>
-  <h2>Thirty minutes of dance, driven by the dancers' own physiology</h2>
-  <p class="sub">Choreographed by Grisha Coleman. <strong>Two workshops and two performances</strong> at MIT Future Fest, Little Kresge, October 2026.</p>
-  <div class="cols">
-    <div>
-      <div class="kv"><b>Form</b><span>a 30-minute dance work — biofeedback from the performers' bodies feeding the audio they move to</span></div>
-      <div class="kv"><b>Arc</b><span>breathing → humming → open vowel — "as soon as the lips open, like the sun comes out"</span></div>
-      <div class="kv"><b>Sound targets</b><span>harmonium — <em>"an analogue of lungs"</em> — aeolian harp, ebow</span></div>
-      <div class="kv"><b>Somatics</b><span><strong>Feldenkrais</strong> — Grisha is a practitioner; the score and the movement sections come out of it</span></div>
-      <div class="kv"><b>On the body</b><span>head-mounted mics, in-ear monitoring — the in-ear can itself be a score</span></div>
-      <div class="kv"><b>Latency</b><span>need not be 1:1. A response that arrives later is <em>more</em> interesting, not less</span></div>
-    </div>
-    <div>
-      <div class="slot">
-        <div class="tag">Video slot — to shoot</div>
-        <p>Rehearsal footage, September. Bodies and breath in the room. This is the one thing no screen recording can substitute for.</p>
-      </div>
-      <p style="margin-top:1em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
-        Eleven rehearsals, ~30 hours, 3 Sept → 2 Oct. Tech at 08:30 on show day.</p>
-    </div>
+  <h2>A thirty-minute dance work with live audio systems reacting to the dancers' biometric data</h2>
+  <p class="sub" style="margin-bottom:.5em">Specialized biometric sensing instruments stream measurements of bodily motion in real time, linking formal traces of dancers' actions to the parameters of live generative audio systems diffused via a quadraphonic speaker array. This generated music, in turn, cues and influences the timing and affect of the danced performance, forming a &quot;supra-organic&quot; feedback loop.</p>
+  <p class="sub">Created by Grisha Coleman. Two workshops and two performances at MIT Future Fest, Little Kresge, October 2026.</p>
+  <div style="margin-top:1.6em;display:flex;flex-direction:column;align-items:center">
+    <img src="media/img/moco_force_transducers.png" alt="Line diagram: seven performers arranged in a fan around a central point, each tethered by a cord to a shared overhead beam, with seven force transducers marked along the cords" style="height:auto;max-height:44vh;max-width:min(100%,360px);object-fit:contain;border-radius:8px;background:#fff;padding:12px;display:block">
+    <p class="cite" style="max-width:40em;text-align:center">Seven force transducers, sited where the performers' tethers meet a shared overhead anchor — the group mechanically coupled before any of it becomes sound. Figure from Coleman, Hosale &amp; Macy, <em>Supra-Organism: Biophysical Sensing Toward Affective Somatic Integration</em>, <a href="https://dl.acm.org/doi/10.1145/3802842.3802906">MOCO&nbsp;'26</a>, ACM.</p>
   </div>
 </div>
 </section>
 
 <!-- 3 ============================================================ -->
-<section class="slide top" data-notes="Say plainly that the piece already exists and has been run before — what is new at MIT is the sound side. THE SOURCE already speaks SuperCollider, which is the obvious integration point for my rig.">
+<section class="slide" data-notes="Context, not argument — a few sentences and move on. The piece already exists and has been run in front of people: Montpellier was a workshop at the movement-and-computing conference, led by Grisha with Mark-David Hosale and Alan Macy.">
 <div class="wrap">
-  <p class="eyebrow">This is not its first outing</p>
   <h2>Montpellier, April 2026</h2>
   <p class="sub">Supra-Organism ran as a workshop at <strong>MOCO'26</strong> — the 10th International Conference on Movement and Computing, Cité des Arts, Montpellier, 23–25 April — presented by Grisha Coleman with Mark-David Hosale and Alan Macy.</p>
-  <div class="cols">
+  <p style="max-width:46em;margin-bottom:1.5em">Participants took part in exercises joining <strong>biophysical sensing</strong> to Feldenkrais technique alongside real-time acoustic bio-feedback.</p>
+  <div class="card figrow">
+    <img src="media/img/the_source.jpg" alt="THE SOURCE: a small matte-black wearable enclosure with a heart-and-roots motif embossed on the front and a lit OLED screen reading The Source by bioMECI">
     <div>
-      <p>Participants were put through hands-on exercises joining <strong>biophysical sensing</strong> to somatic practice — Feldenkrais technique alongside real-time physiological feedback — and the paper of the same name is the week-one reading for our class.</p>
-      <p>Hosale and Macy visit the class on <strong>30 September</strong>, three days before the show.</p>
-      <p style="color:var(--faint)">What is new at MIT is the sound: the biosensing side already exists and has been tested in front of people. The morphing does not.</p>
-    </div>
-    <div class="card">
       <h3>THE SOURCE — Hosale &amp; Macy</h3>
-      <p>The wearable sensing platform the piece is built around. Full-spectrum biophysical capture: ECG, EMG, EEG, EOG, EGG, respiratory effort, EDA, PPG, blood volume and flow.</p>
-      <p style="margin-bottom:0">It already talks to <strong>SuperCollider</strong> — along with Max, Ableton, TouchDesigner and Processing. Which is the obvious place for my rig to meet it.</p>
+      <p>A wearable sensing platform developed by Mark-David Hosale and Alan Macy. Full-spectrum biophysical capture: ECG, EMG, EEG, EOG, EGG, respiratory effort, EDA, PPG, blood volume and flow.</p>
+      <p style="margin-bottom:0">It streams the captured signals out live via <strong>OSC</strong>, allowing for integration with live audio generation systems.</p>
     </div>
   </div>
-  <p class="cite">Supra-Organism: Biophysical Sensing Toward Affective Somatic Integration — Coleman, Hosale &amp; Macy, <a href="https://dl.acm.org/doi/10.1145/3802842.3802906">MOCO '26</a>, ACM. Platform: <a href="https://www.biomeci.com/events/">bioMECI</a>. No public video of the Montpellier workshop was found — worth asking Grisha or Mark-David directly.</p>
+  <p class="cite">Supra-Organism: Biophysical Sensing Toward Affective Somatic Integration — Coleman, Hosale &amp; Macy, <a href="https://dl.acm.org/doi/10.1145/3802842.3802906">MOCO '26</a>, ACM. Platform and device photo: <a href="https://www.biomeci.com/">bioMECI</a> &mdash; &copy; Hosale &amp; Macy.</p>
 </div>
 </section>
 
 <!-- 4 ============================================================ -->
-<section class="slide" data-notes="This is the current thinking and it is in flux. The point to land: the ritual is not decoration, it solves the credibility problem that kills most computer music on stage.">
+<section class="slide" data-notes="Lead with the real constraint: we wanted live singing in the piece, and lavaliers on top of the transducer rig was more than the show could carry. The ritual is not decoration — it is what buys back the liveness we gave up by cutting live voice. Be honest that whether those exact takes feed the system is still open; what matters is that the audience watched the material come out of these bodies.">
 <div class="wrap">
   <p class="eyebrow">The design problem</p>
-  <h2>The piece will open with a "ritual"</h2>
-  <p class="lead">The performers will make the input sounds live, in front of the audience, before anything is processed.</p>
+  <h2>How to include live acoustic sound generation into the system?</h2>
+  <p class="lead">Putting live singing into the choreography was deemed too difficult, because it required putting lavalier mics on performers who are already tethered to the force transducers and wired into the biosensing rig, composing material for them to vocalize, and coordinating extra rehearsals.</p>
   <div class="cols" style="margin-top:1.2em">
     <div>
-      <p>So that everything heard afterwards will be heard as <strong>descended from those bodies</strong>. The audience should build that connection itself, in the first minutes, and carry it through the rest of the piece.</p>
-      <p>Without it you get the classic computer-music disconnect: no one can tell whether someone on stage is transforming a voice in real time or pressing play on a track made last week. The two look identical from row four.</p>
+      <p>A classic dilemma of computer music performance: how do you let the audience in on what is actually happening in the computer to produce the sounds they are hearing?</p>
+      <p>Or — how do you convince them you aren't just pressing play on a pre-produced recording?</p>
     </div>
     <div class="card">
-      <h3>What the ritual should buy us</h3>
-      <p>Establishing liveness early is what earns the freedom to <strong>delay, layer and transform</strong> later — including the non-simultaneous responses Grisha and Anna both want. The audience should still trace a sound at minute twenty back to a breath at minute two.</p>
-      <p style="color:var(--faint);margin-bottom:0">Status: current plan, still in flux.</p>
+      <h3>So the piece opens with a ritual</h3>
+      <p>The performers make much of the corpora in front of the audience, before anything is processed.</p>
+      <p style="margin-bottom:0">That is what maintains some semblance of the <em>aura</em><sup class="fn">1</sup> of liveness through the variety of AI procedures and compositional itineraries the audio is then processed through.</p>
     </div>
   </div>
+  <p class="cite"><sup>1</sup> Walter Benjamin, <em>The Work of Art in the Age of Mechanical Reproduction</em> (1935) — the aura as the here-and-now of a work, the thing that withers under reproduction.</p>
 </div>
 </section>
 
 <!-- 4 ============================================================ -->
-<section class="slide" data-notes="Why a morph rather than an effect or a synth. The uncanny middle is the material — not the endpoints. And it has to be playable: controllable, repeatable, slow enough to hear.">
+<section class="slide" data-notes="The toolkit, named plainly — six operations the system performs on sound. Then land the two systems the rest of the talk is about: FlowEdit does the morphing, the Concatenator does the collaging. Opposite directions across the same gap. Flag that the Concatenator turned out to be the more legible demo, because that comes back later.">
 <div class="wrap">
-  <p class="eyebrow">Why morphing</p>
-  <h2>The interesting part is the passage, not the endpoints</h2>
-  <div class="cols" style="margin-top:.8em">
-    <div>
-      <p>A morph is a way of getting at the <strong>uncanniness</strong> of these processes. Breath is legible; harmonium is legible. The region between them is neither — a voice that is no longer only a voice and not yet an instrument.</p>
-      <p>That in-between is the material. Which means the system's job is not to produce a good harmonium; it is to make the <em>passage</em> playable — controllable, repeatable, and slow enough to hear it happen.</p>
-    </div>
+  <p class="eyebrow">Methods of sonic/bodily transformation/activation</p>
+  <div class="cols" style="margin-top:1.1em;grid-template-columns:.8fr 1.2fr;align-items:center">
+    <ul class="methods">
+      <li>Morphing</li>
+      <li>Collaging</li>
+      <li>Spatializing</li>
+      <li>Mixing</li>
+      <li>Synchronizing</li>
+      <li>Cuing</li>
+    </ul>
     <div class="card">
-      <h3>Two directions, one premise</h3>
-      <p><strong>FlowEdit</strong> — a breath becomes an instrument.</p>
-      <p><strong>The Concatenator</strong> — a known song is rebuilt out of breath.</p>
-      <p style="margin-bottom:0">Opposite directions across the same gap, and the second one turned out to be the more legible demo.</p>
+      <h3>Technologies of transformation</h3>
+      <p><strong>Stable Audio FlowEdit</strong> — an implementation of the FlowEdit<sup class="fn">1</sup> image-editing technique for Stable Audio 3<sup class="fn">2</sup>, by HAI-Res PhD student Nithya Shikarpur. Allows for creating a sequence of steps between source audio and generated audio matching a target text prompt. Playing back audio while panning across a synchronized bank of such steps composes a perceptual morph between sounds.</p>
+      <p style="margin-bottom:0"><strong>The Concatenator</strong><sup class="fn">3</sup> — a real-time system for concatenative synthesis. Given a corpus of audio recordings, it synthesizes a target recording or live audio stream by playing back and overlaying the most similar-sounding chunks in the corpus, enabling an uncanny amalgamation of the source and target audio.</p>
     </div>
   </div>
+  <p class="cite">
+    <span class="fnline"><sup>1</sup> Kulikov et al., <em>FlowEdit: Inversion-Free Text-Based Editing Using Pre-Trained Flow Models</em>, <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a>.</span>
+    <span class="fnline"><sup>2</sup> Stability AI, <em>Stable Audio 3 Technical Report</em>, <a href="https://arxiv.org/abs/2605.17991">arXiv:2605.17991</a>.</span>
+    <span class="fnline"><sup>3</sup> Tralie &amp; Cantil, <em>The Concatenator: A Bayesian Approach to Real-Time Concatenative Musaicing</em>, ISMIR 2024, <a href="https://arxiv.org/abs/2411.04366">arXiv:2411.04366</a> — CC BY-NC-ND.</span>
+  </p>
 </div>
 </section>
 
 <!-- 5 ============================================================ -->
-<section class="slide top" data-notes="Everything downstream is trained on us. That is a deliberate choice — no scraped voice data in anything that reaches the stage.">
+<section class="slide top" data-notes="Everything downstream is trained on us — a deliberate choice, no scraped voice data in anything that reaches the stage. Then be honest about the session itself: we arrived with the grid on the left, and what Grisha actually made in the room departed from it a long way. Good material, weaker coverage, and the training set is worse for it. This is the first place the talk admits the plan and the recording were not the same thing.">
 <div class="wrap">
   <p class="eyebrow">17 July · session one</p>
-  <h2>Grisha, alone in a room, for forty-four minutes</h2>
-  <p class="sub">44 configurations × 3 takes. The systematic pass that everything else was built on.</p>
+  <h2>Grisha Coleman, initial recording session (recorded / prompted by Anna Huang and Jon Myers)</h2>
+  <p class="sub">Plan: 44 configurations × 3 takes.</p>
   <div class="cols">
     <div>
       <div class="kv"><b>Breathing</b><span>{pp, mp} × {medium, slow} × {transparent, breathy}</span></div>
       <div class="kv"><b>Humming</b><span>C4 D4 G4 A4 D5 E5 × {pp, mp}</span></div>
       <div class="kv"><b>Open vowel</b><span>"oh" and "ah", same pitches × {pp, mp}</span></div>
       <div class="kv"><b>Transitions</b><span>breath→hum, hum→open — the arc of the piece, in miniature</span></div>
+      <p style="margin-top:1.2em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
+        Why so systematic: a model trained on one person's breath needs to see the whole range of that breath —
+        dynamics, speed, and how much air is in the tone — or it collapses to whatever was most common in the take.</p>
+    </div>
+    <div>
       <div class="cliphead">From the session</div>
       <div class="clip"><span class="lab"><b>breathing</b>, medium</span><audio controls preload="none" src="media/audio/jul17_breath.mp3"></audio></div>
       <div class="clip"><span class="lab"><b>humming</b></span><audio controls preload="none" src="media/audio/jul17_hum.mp3"></audio></div>
       <div class="clip"><span class="lab"><b>hum → open vowel</b></span><audio controls preload="none" src="media/audio/jul17_open.mp3"></audio></div>
-    </div>
-    <div>
-      <div class="slot"><div class="tag">Photo slot</div><p>17 July session.</p></div>
-      <p style="margin-top:1.2em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">
-        Why so systematic: a model trained on one person's breath needs to see the whole range of that breath —
-        dynamics, speed, and how much air is in the tone — or it collapses to whatever was most common in the take.</p>
+      <div class="card" style="margin-top:1.3em">
+        <h3>What actually happened</h3>
+        <p style="margin-bottom:0">We came in with the plan above, but the audio Grisha decided to make and that we ended up collecting veered from it significantly. That reduced the usability of the session for model training: the systematic coverage the grid was designed to guarantee is not all there.</p>
+        <p style="margin-bottom:0;margin-top:.6em">We also had some technical difficulties, so there is some electrical noise on these recordings.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -265,7 +266,7 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
       <div class="clip"><span class="lab"><b>breathing</b> — group</span><audio controls preload="none" src="media/audio/jul23_breath.mp3"></audio></div>
       <div class="clip"><span class="lab"><b>chord</b> — group</span><audio controls preload="none" src="media/audio/jul23_chord.mp3"></audio></div>
       <div class="clip"><span class="lab"><b>chord</b> — Anna's stem</span><audio controls preload="none" src="media/audio/jul23_anna.mp3"></audio></div>
-      <p style="margin-top:1em">The stems are the consequential part. Because every performer was captured separately, the same session later supports <strong>one filter per voice</strong> — four independent morphs panned across the field — instead of one filter over a mix.</p>
+      <p style="margin-top:1em">The stems are the consequential part. Because every performer was captured separately, the same session supports both mixed and stem-separated training data, and use as source material for the performance.</p>
     </div>
     <div>
       <div class="slot"><div class="tag">Photo slot</div><p>23 July, the big group day. Anna has photos from this one.</p></div>
@@ -288,12 +289,14 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
       <div class="cliphead">From the session</div>
       <div class="clip"><span class="lab"><b>F</b>, very long</span><audio controls preload="none" src="media/audio/jul30_harm_long.mp3"></audio></div>
       <div class="clip"><span class="lab"><b>F</b>, five aperiodic</span><audio controls preload="none" src="media/audio/jul30_harm_aper.mp3"></audio></div>
-      <p style="margin-top:1em">Hand-pumped bellows, breath-controlled swells, and a reed that keeps sounding after the hand stops — the reason Grisha reached for it as an analogue of lungs, and the reason it is the target side of nearly every morph we run.</p>
-      <p style="color:var(--faint)">A fourth session on 18 August is recorded but not yet bounced — one 18-minute take at 96 kHz with no take boundaries, so it is out of the corpora until it is cut.</p>
+      <div class="clip"><span class="lab"><b>C</b>, quiet</span><audio controls preload="none" src="media/audio/jul30_harm_c_quiet.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>C</b>, arch</span><audio controls preload="none" src="media/audio/jul30_harm_c_arch.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>pentatonic chord</b>, medium</span><audio controls preload="none" src="media/audio/jul30_harm_pent_chord.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>full pentatonic</b>, build-up</span><audio controls preload="none" src="media/audio/jul30_harm_pent_build.mp3"></audio></div>
+      <p style="margin-top:1em">Since the initial conceptions of the piece had to do with breathing, Grisha thought a good analogue in the musical world for the breath might be the harmonium. We acquired a travel harmonium and used it to make recordings for our training datasets.</p>
     </div>
     <div>
-      <img src="media/img/jul30_harmonium.jpg" alt="Three people sitting on a rug around a harmonium in the studio, close-miked, 30 July 2026" style="width:100%;height:auto;max-height:62vh;object-fit:contain;border-radius:10px;border:1px solid var(--line);display:block">
-      <p style="margin-top:.55em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">On the floor around the instrument, 30 July. Close-miked in the music-center studio.</p>
+      <img src="media/img/jul30_harmonium.jpg" alt="Three people sitting on a rug around a harmonium in the studio, close-miked, 30 July 2026" style="width:100%;height:auto;max-height:48vh;object-fit:contain;border-radius:10px;border:1px solid var(--line);display:block">
     </div>
   </div>
 </div>
@@ -305,7 +308,7 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
   <p class="eyebrow">Method · interlude one</p>
   <h2>What FlowEdit does</h2>
   <p class="sub">Give it a recording and two prompts — what it <em>is</em>, and what it should <em>become</em>.</p>
-  <svg class="diagram" viewBox="0 0 1000 300" role="img" aria-label="FlowEdit: at each step, estimate source and target velocity and integrate the difference">
+  <svg class="diagram" viewBox="0 0 1000 420" role="img" aria-label="FlowEdit: at each step, estimate source and target velocity and integrate the difference">
     <defs>
       <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
         <path d="M0,0 L7,3.2 L0,6.4 z" fill="#5fb3a6"/></marker>
@@ -342,10 +345,17 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
 
     <line x1="0" y1="196" x2="1000" y2="196" stroke="#262c34"/>
     <text x="0" y="228" fill="#ecebe7" font-size="16" font-family="system-ui">No inversion.</text>
-    <text x="112" y="228" fill="#9aa3ad" font-size="16" font-family="system-ui">The recording is never encoded back into noise and re-generated — which is what usually</text>
-    <text x="0" y="252" fill="#9aa3ad" font-size="16" font-family="system-ui">destroys the phrasing. It walks a path from where your audio is toward where the target prompt lives, and</text>
-    <text x="0" y="276" fill="#9aa3ad" font-size="16" font-family="system-ui">you can stop anywhere along it. Those stopping points are the morph.</text>
+    <text x="112" y="228" fill="#9aa3ad" font-size="16" font-family="system-ui">Diffusion editing normally pushes a recording all the way up to pure noise, then regenerates</text>
+    <text x="0" y="252" fill="#9aa3ad" font-size="16" font-family="system-ui">it from scratch under the new prompt, and the phrasing of the original rarely survives that round trip.</text>
+    <text x="0" y="276" fill="#9aa3ad" font-size="16" font-family="system-ui">FlowEdit skips that journey. At each of the twenty steps it estimates two velocities for the same latent:</text>
+    <text x="0" y="300" fill="#9aa3ad" font-size="16" font-family="system-ui">one under the prompt for what the audio is, one under the prompt for what it should become. It integrates</text>
+    <text x="0" y="324" fill="#9aa3ad" font-size="16" font-family="system-ui">only the difference between them, so the recording never leaves its own neighbourhood. The timing stays</text>
+    <text x="0" y="348" fill="#9aa3ad" font-size="16" font-family="system-ui">put while the timbre travels, and every intermediate step is a finished, playable file at a known distance</text>
+    <text x="0" y="372" fill="#9aa3ad" font-size="16" font-family="system-ui">from the original. Panning sequentially across the audio files decoded at each step is what forms the</text>
+    <text x="0" y="396" fill="#9aa3ad" font-size="16" font-family="system-ui">sensation of a morph from one sound to another.</text>
   </svg>
+  <div class="cliphead" style="margin-top:.6em">One of these, end to end</div>
+  <div class="clip"><span class="lab"><b>Anna's breath → harmonium</b><br><span style="color:var(--faint)">62 s, panned across the decoded steps</span></span><audio controls preload="none" src="media/audio/morph_ah_harmonium.mp3"></audio></div>
   <p class="cite">FlowEdit: Inversion-Free Text-Based Editing Using Pre-Trained Flow Models — Kulikov, Kleiner, Huberman-Spiegelglas &amp; Michaeli, 2024. <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a> · Running over Stable Audio 3 (`medium`), Stability AI.</p>
 </div>
 </section>
@@ -359,18 +369,18 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
   <div class="cols3" style="margin-top:1em">
     <div class="card">
       <h3>(a) The usual way</h3>
-      <p style="margin-bottom:0">Push the image all the way up to noise, then generate back down under the new prompt. The round trip is where the original's structure gets lost.</p>
+      <p style="margin-bottom:0">Push the image all the way up to noise, then generate back down under the new prompt, losing much of the original structure.</p>
     </div>
     <div class="card">
       <h3>(b) Seen differently</h3>
-      <p style="margin-bottom:0">That same edit, re-read as accumulating the <strong>difference</strong> between the target and source velocities — the orange arrow — rather than as two separate journeys.</p>
+      <p style="margin-bottom:0">That same edit, re-read as accumulating the difference between the target and source velocities — the orange arrow — rather than as two separate journeys.</p>
     </div>
     <div class="card" style="border-color:var(--amber)">
       <h3 style="color:var(--amber)">(c) FlowEdit</h3>
       <p style="margin-bottom:0">Skip the trip to noise entirely. Start from the original and integrate only that difference. It never leaves the neighbourhood of what you gave it.</p>
     </div>
   </div>
-  <p class="cite"><strong style="color:var(--dim)">Tiger → cat is our breath → harmonium.</strong> What survives in their figure — the pose, the framing, the background — is what survives in ours: the phrasing, the timing, where each swell lands. Figure 1 from Kulikov et al., <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a>.</p>
+  <p class="cite"><strong style="color:var(--dim);margin-right:.45em">tiger → cat : breath → harmonium</strong> In their figure the pose, the framing and the background all survive the edit. In ours it is the phrasing, the timing, and where each swell lands. Figure 1 from Kulikov et al., <a href="https://arxiv.org/abs/2412.08629">arXiv:2412.08629</a>.</p>
 </div>
 </section>
 
@@ -382,11 +392,11 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
   <div class="cols">
     <div class="card">
       <h3>The construction</h3>
-      <p>Stable Audio 3 is a <strong>flow-matching</strong> model: the transformer predicts a <em>velocity</em>, not a denoised sample. Generation solves an ODE over noise level <code>t</code>:</p>
+      <p>Stable Audio 3 is a flow-matching model: the transformer predicts a <em>velocity</em>, not a denoised sample. Generation solves an ordinary differential equation (ODE) over noise level <code>t</code>:</p>
       <p style="font-family:ui-monospace,Menlo,monospace;color:var(--amber);font-size:clamp(13px,1.3vw,17px)">dZ<sub>t</sub> / dt = V(Z<sub>t</sub>, t, C)</p>
-      <p>from <code>t=1</code> (noise) down to <code>t=0</code> (audio). Because the source and target velocities are evaluated on latents carrying the <strong>same noise draw</strong>, they contain roughly the same noise component — and it cancels in the difference:</p>
+      <p>from <code>t=1</code> (noise) down to <code>t=0</code> (audio). Because the source and target velocities are evaluated on latents carrying the same noise draw, they contain roughly the same noise component — and it cancels in the difference:</p>
       <p style="font-family:ui-monospace,Menlo,monospace;color:var(--amber);font-size:clamp(13px,1.3vw,17px)">V<sup>Δ</sup> = V(Ẑ<sup>tar</sup><sub>t</sub>, c<sub>tar</sub>) − V(Ẑ<sup>src</sup><sub>t</sub>, c<sub>src</sub>)</p>
-      <p style="margin-bottom:0">What is left is a pure "drive the source toward the target" direction. Integrate it starting from the <em>actual</em> source latent and nothing is ever pushed to noise — so <strong>every intermediate point decodes to listenable audio.</strong> That is what the morph slider plays. There is no comparably clean construction for a noise-prediction diffusion model.</p>
+      <p style="margin-bottom:0">What is left is a pure "drive the source toward the target" direction. Integrate it starting from the <em>actual</em> source latent and nothing is ever pushed to noise, so every intermediate point decodes to listenable audio.</p>
     </div>
     <div>
       <div class="card">
@@ -412,13 +422,12 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
   <p class="sub">Nithya Shikarpur built the FlowEdit server this whole strand descends from — a Gradio front end over Stability AI's Stable Audio 3. My repo began as a fork of it.</p>
   <div class="cols">
     <div>
-      <div class="kv"><b>Hers</b><span>FlowEdit wired to Stable Audio 3, web UI: upload audio, two prompts, steps and CFG</span></div>
-      <div class="kv"><b>Mine, since</b><span>multi-LoRA loading, per-pass binding, a JSON API, and a SuperCollider front end</span></div>
-      <div class="kv"><b>Still hers</b><span>the sampler architecture everything hangs off, and the FlowEdit patches it started from</span></div>
-      <p style="margin-top:1.2em">She is also leading a FlowEdit session for the class on 7 October, and advising on what can realistically run live.</p>
+      <div class="kv"><b>Nithya's</b><span>FlowEdit wired to Stable Audio 3 — the sampler architecture everything still hangs off, the FlowEdit patches, and a web UI: upload audio, two prompts, steps and CFG</span></div>
+      <div class="kv"><b>What I added</b><span>multi-LoRA loading, per-pass binding, a JSON API, a SuperCollider front end, and evenly spaced step capture: hers clusters the intermediates around the middle of the trajectory, mine spaces them uniformly so the ladder sweeps evenly</span></div>
     </div>
     <div>
-      <div class="slot"><div class="tag">Screenshot slot</div><p>Nithya's Gradio interface. Needs the tunnel up and a server answering on 7882 — grab it next time you are connected.</p></div>
+      <img src="media/img/nithya_flowedit_gradio.png" alt="The FlowEdit Gradio interface: source prompt breathing sounds, target prompt waves crashing, a one-minute init audio player, src and tar CFG scale sliders, and a grid of ten outputs — eight intermediates labelled t=1.0 down to t=0.3 plus Final — each with a waveform player and a mel spectrogram" style="width:100%;height:auto;max-height:62vh;object-fit:contain;border-radius:8px;border:1px solid var(--line);display:block">
+      <p style="margin-top:.55em;color:var(--faint);font-size:clamp(12px,1.2vw,15px)">Two prompts and one uploaded recording, and the whole trajectory comes back decoded: a grid of intermediate steps plus the final, each with its own player and mel spectrogram.</p>
     </div>
   </div>
 </div>
@@ -427,25 +436,29 @@ svg.diagram{width:100%;height:auto;max-height:52vh;display:block;margin:.3em 0}
 <!-- 10 =========================================================== -->
 <section class="slide top" data-notes="Play the source, then the stock harmonium attempt. The point is not that it is bad — it is that it is generic. It sounds like the internet's average harmonium, not the instrument that was in the room on 30 July.">
 <div class="wrap">
-  <p class="eyebrow">22–23 July · before any training</p>
-  <h2>The stock model, prompts only</h2>
-  <p class="sub">Feed in a breath, ask for something else, and turn the prompt knobs. This is where it started — and the ceiling you hit quickly.</p>
+  <p class="eyebrow">Before and after training</p>
+  <h2>The same morph, with and without the adapters</h2>
+  <p class="sub">Feed in a breath, ask for something else, and let the whole trajectory play. Stock Stable Audio 3 is where this started, and the ceiling you hit quickly.</p>
   <div class="cols">
     <div>
       <div class="cliphead">Source</div>
-      <div class="clip"><span class="lab"><b>breathing</b>, 17 July</span><audio controls preload="none" src="media/audio/jul17_breath.mp3"></audio></div>
-      <div class="cliphead">Stock Stable Audio 3, no LoRA</div>
-      <div class="clip"><span class="lab">→ <b>harmonium</b></span><audio controls preload="none" src="media/audio/stock_harm.mp3"></audio></div>
-      <div class="clip"><span class="lab">→ <b>dizi</b>, mournful tone</span><audio controls preload="none" src="media/audio/stock_dizi.mp3"></audio></div>
-      <div class="clip"><span class="lab">→ <b>ocean waves</b></span><audio controls preload="none" src="media/audio/stock_ocean.mp3"></audio></div>
-      <div class="clip"><span class="lab">hum → <b>lion</b></span><audio controls preload="none" src="media/audio/stock_lion.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>Anna, breathing</b>, 23 July</span><audio controls preload="none" src="media/audio/morph_anna_src.mp3"></audio></div>
+      <div class="cliphead">→ harmonium, the whole morph</div>
+      <div class="clip"><span class="lab"><b>the training data</b><br><span style="color:var(--faint)">harmonium-stereo-v1, 30 July</span></span><audio controls preload="none" src="media/audio/train_harm.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>stock</b><br><span style="color:var(--faint)">no LoRA</span></span><audio controls preload="none" src="media/audio/morph_stock_harm.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>trained</b><br><span style="color:var(--faint)">voice-v2 + harmonium, per-pass</span></span><audio controls preload="none" src="media/audio/morph_trained_harm.mp3"></audio></div>
+      <div class="cliphead">→ aeolian harp, the whole morph</div>
+      <div class="clip"><span class="lab"><b>the training data</b><br><span style="color:var(--faint)">aeolian-wind-v1 — Michael Krzyzaniak</span></span><audio controls preload="none" src="media/audio/train_aeolian.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>stock</b><br><span style="color:var(--faint)">no LoRA</span></span><audio controls preload="none" src="media/audio/morph_stock_wind.mp3"></audio></div>
+      <div class="clip"><span class="lab"><b>trained</b><br><span style="color:var(--faint)">voice-v2 + aeolian, per-pass</span></span><audio controls preload="none" src="media/audio/morph_trained_wind.mp3"></audio></div>
+      <div class="clip" style="border:0;background:none"><span class="lab" style="color:var(--faint);font-size:clamp(11px,1.1vw,14px)">Same source, same prompts, same seed 101, same 20 steps and even-step capture. The only difference is whether the adapters are loaded.</span></div>
     </div>
     <div class="card">
       <h3>What this told us</h3>
-      <p><strong>The mechanism works.</strong> The breath's phrasing survives intact — every swell lands where the performer put it.</p>
-      <p><strong>The timbre is generic.</strong> Prompted for harmonium you get a plausible harmonium-shaped sound; you do not get <em>our</em> harmonium, and on the voice side you do not get a specific body's breath.</p>
-      <p>Broad targets fare better than close ones: ocean waves are convincing because nobody has a reference. A harmonium in the same room as a real one is not.</p>
-      <p style="margin-bottom:0">Prompt engineering could not close that gap. Training could.</p>
+      <p><strong>The mechanism works, stock.</strong> The breath's phrasing survives intact either way. Every swell lands where Anna put it.</p>
+      <p><strong>But the stock timbre is generic.</strong> Prompted for harmonium you get a plausible harmonium-shaped sound; you do not get <em>our</em> harmonium, and on the voice side you do not get a specific body's breath.</p>
+      <p>Broad targets fare better than close ones. Nobody has a reference for an aeolian harp, so the stock version is halfway convincing. A harmonium recorded in the same room as a real one is not.</p>
+      <p style="margin-bottom:0">Prompt engineering could not close that gap. Training could, and the second clip in each pair is what that bought.</p>
     </div>
   </div>
 </div>

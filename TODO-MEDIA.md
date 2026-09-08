@@ -5,13 +5,14 @@ All media lives under `media/`. Drop files in and tell Claude to wire them, or r
 `.slot` block in `index.html` yourself.
 
 ## Photos (you have or can get these)
-- [ ] **Slide 6** — 17 July session (Grisha).
+- [x] ~~**Slide 6** — 17 July session (Grisha).~~ No photo exists from this session; slot removed.
 - [ ] **Slide 7** — 23 July group day. *Anna has photos from this one.*
 - [x] **Slide 8** — 30 July harmonium day. DONE (`media/img/jul30_harmonium.jpg`).
       → drop into `media/img/`
 
 ## Screenshots
-- [ ] **Slide 10** — Nithya's Gradio interface. Needs the tunnel up + a server on 7882.
+- [x] **Slide 12** — Nithya's Gradio interface. DONE (`media/img/nithya_flowedit_gradio.png`),
+      captured 8 Sept from `run_flowedit.py` on mobile01:7882.
 - [x] **Slide 10** — FlowEdit paper Figure 1. DONE — now its own slide with panel captions.
 
 ## Video you already have somewhere
